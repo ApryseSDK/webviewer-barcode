@@ -5,8 +5,3 @@
   display: flex;
   flex-direction: row;
 }
-
-.webviewer {
-  height: 100vh;
-  width: 95%;
-}

@@ -1,8 +1,11 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import WebViewer from '@pdftron/webviewer';
+import Barcode from '../Barcode';
+import './webviewer.css'
 
 const WebViewerPDFTron = () => {
   const viewer = useRef(null);
+  const [viewerInstance, setViewerInstance] = useState(null);
 
   // if using a class, equivalent of componentDidMount 
   useEffect(() => {
@@ -13,17 +16,16 @@ const WebViewerPDFTron = () => {
       },
       viewer.current,
     ).then((instance) => {
+      setViewerInstance(instance);
       const { docViewer, Annotations } = instance;
       const annotManager = docViewer.getAnnotationManager();
-
-      
-      
     });
   }, []);
 
   return (
-    <div className="App">
-      <div className="webviewer" ref={viewer}></div>
+    <div className='container'>
+      <div className='webviewer' ref={viewer}></div>
+      <Barcode instance={viewerInstance}/>
     </div>
   );
 };
