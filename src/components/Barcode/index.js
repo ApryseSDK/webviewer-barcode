@@ -15,7 +15,7 @@ const Barcode = ({ instance }) => {
         type="text"
       ></input>
       <button
-        onClick={e => {
+        onClick={async e => {
           e.preventDefault();
           const { Annotations, annotManager } = instance;
           const stampAnnot = new Annotations.StampAnnotation();
@@ -24,9 +24,11 @@ const Barcode = ({ instance }) => {
           stampAnnot.Y = 250;
           stampAnnot.Width = 300;
           stampAnnot.Height = 200;
-          var svg = new XMLSerializer().serializeToString(svgRef.current);
-          var encodedData = btoa(svg);
-          stampAnnot.ImageData = `data:image/svg+xml;base64,${encodedData}`;
+        //   SVG IMPLEMENTATION
+        //   var svg = new XMLSerializer().serializeToString(svgRef.current);
+        //   var encodedData = btoa(svg);
+        //   stampAnnot.ImageData = `data:image/svg+xml;base64,${encodedData}`;
+          stampAnnot.ImageData = svgRef.current.toDataURL();
           stampAnnot.Author = annotManager.getCurrentUser();
           annotManager.addAnnotation(stampAnnot);
           annotManager.redrawAnnotation(stampAnnot);
@@ -34,7 +36,7 @@ const Barcode = ({ instance }) => {
       >
         Stamp on a PDF
       </button>
-      <svg ref={svgRef}></svg>
+      <canvas width={'300px'} height={'200px'} ref={svgRef}></canvas>
     </div>
   );
 };

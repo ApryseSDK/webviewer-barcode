@@ -1,6 +1,7 @@
 import React, { useRef, useEffect, useState } from 'react';
 import WebViewer from '@pdftron/webviewer';
 import Barcode from '../Barcode';
+import javascriptBarcodeReader from 'javascript-barcode-reader';
 import './webviewer.css';
 
 const WebViewerPDFTron = () => {
@@ -14,11 +15,20 @@ const WebViewerPDFTron = () => {
         path: '/webviewer/lib',
         initialDoc:
           'https://pdftron.s3.amazonaws.com/downloads/pl/webviewer-demo.pdf',
+        fullAPI: true,
       },
       viewer.current,
-    ).then(instance => {
+    ).then(async instance => {
       setViewerInstance(instance);
-      const { docViewer, Annotations, Tools, iframeWindow } = instance;
+      const {
+        docViewer,
+        annotManager,
+        Annotations,
+        Tools,
+        iframeWindow,
+        PDFNet,
+      } = instance;
+      await PDFNet.initialize();
 
       const createSnipTool = docViewer => {
         const SnipTool = function () {
@@ -45,25 +55,43 @@ const WebViewerPDFTron = () => {
 
       // Add tool button in header
       instance.setHeaderItems(function (header) {
-        header.getHeader('toolbarGroup-Edit').get('cropToolGroupButton').insertAfter({
-          type: 'toolButton',
-          toolName: 'SnipTool',
-        });
+        header
+          .getHeader('toolbarGroup-Edit')
+          .get('cropToolGroupButton')
+          .insertAfter({
+            type: 'toolButton',
+            toolName: 'SnipTool',
+          })
+          .insertAfter({
+            type: 'actionButton',
+            img:
+              '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"/></svg>',
+            onClick: async () => {
+              // flatten annotations
+              const annots = await annotManager.exportAnnotations();
+              const fdf_doc = await PDFNet.FDFDoc.createFromXFDF(annots);
+              const doc = await docViewer.getDocument().getPDFDoc();
+              await doc.fdfUpdate(fdf_doc);
+              await doc.flattenAnnotations();
+              annotManager.deleteAnnotations(annotManager.getAnnotationsList());
+              docViewer.refreshAll();
+              docViewer.updateView();
+              docViewer.getDocument().refreshTextData();
+            },
+          });
       });
 
       //Download URI
-      const downloadURI = (uri, name) => {
-        let link = document.createElement('a');
+      var downloadURI = (uri, name) => {
+        var link = document.createElement('a');
         link.download = name;
         link.href = uri;
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
-        link = null;
       };
 
-      customSnipTool.on('annotationAdded', (annotation) => {
-        console.log(annotation);
+      customSnipTool.on('annotationAdded', annotation => {
         const pageIndex = annotation.PageNumber;
         // get the canvas for the page
         const iframeDocument = iframeWindow.document;
@@ -71,11 +99,10 @@ const WebViewerPDFTron = () => {
           'pageContainer' + pageIndex,
         );
         const pageCanvas = pageContainer.querySelector('.canvas' + pageIndex);
+        const topOffset = parseFloat(pageContainer.style.top) || 0;
+        const leftOffset = parseFloat(pageContainer.style.left) || 0;
 
-        const topOffset = parseFloat(pageCanvas.style.top) || 0;
-        const leftOffset = parseFloat(pageCanvas.style.left) || 0;
         const zoom = docViewer.getZoom();
-
         const x = annotation.X * zoom - leftOffset;
         const y = annotation.Y * zoom - topOffset;
         const width = annotation.Width * zoom;
@@ -85,9 +112,19 @@ const WebViewerPDFTron = () => {
         copyCanvas.width = width;
         copyCanvas.height = height;
         const ctx = copyCanvas.getContext('2d');
+        console.log(pageContainer);
         // copy the image data from the page to a new canvas so we can get the data URL
-        ctx.drawImage(pageCanvas, x, y, width, height, 0, 0, width, height);
+        ctx.drawImage(pageCanvas, x, y, annotation.Width, annotation.Height, 0, 0, width, height);
         downloadURI(copyCanvas.toDataURL(), 'snippet.png');
+
+        javascriptBarcodeReader({
+          image: copyCanvas,
+          barcode: 'code-128',
+        })
+          .then(result => {
+            console.log(result);
+          })
+          .catch(console.log);
 
         const annotManager = docViewer.getAnnotationManager();
         annotManager.deleteAnnotation(annotation);
