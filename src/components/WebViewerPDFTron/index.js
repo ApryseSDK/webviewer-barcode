@@ -81,16 +81,6 @@ const WebViewerPDFTron = () => {
           });
       });
 
-      //Download URI
-      var downloadURI = (uri, name) => {
-        var link = document.createElement('a');
-        link.download = name;
-        link.href = uri;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-      };
-
       customSnipTool.on('annotationAdded', annotation => {
         const pageIndex = annotation.PageNumber;
         // get the canvas for the page
@@ -114,15 +104,14 @@ const WebViewerPDFTron = () => {
         const ctx = copyCanvas.getContext('2d');
         console.log(pageContainer);
         // copy the image data from the page to a new canvas so we can get the data URL
-        ctx.drawImage(pageCanvas, x, y, annotation.Width, annotation.Height, 0, 0, width, height);
-        downloadURI(copyCanvas.toDataURL(), 'snippet.png');
+        ctx.drawImage(pageCanvas, x, y, width, height, 0, 0, width, height);
 
         javascriptBarcodeReader({
           image: copyCanvas,
           barcode: 'code-128',
         })
           .then(result => {
-            console.log(result);
+            alert(`Barcode: ${result}`);
           })
           .catch(console.log);
 
