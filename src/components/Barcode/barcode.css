@@ -1,6 +1,11 @@
 .barcodeContainer {
-    width: 400px;
+    width: 300px;
     display: flex;
     flex-direction: column;
     padding: 10px;
+}
+
+canvas {
+    width: 300px;
+    height: 210px;
 }

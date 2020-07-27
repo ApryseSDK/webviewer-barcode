@@ -16,6 +16,7 @@ const WebViewerPDFTron = () => {
         initialDoc:
           'https://pdftron.s3.amazonaws.com/downloads/pl/webviewer-demo.pdf',
         fullAPI: true,
+        disabledElements: ['ribbons', 'cropToolGroupButton']
       },
       viewer.current,
     ).then(async instance => {
@@ -33,7 +34,7 @@ const WebViewerPDFTron = () => {
       const createSnipTool = docViewer => {
         const SnipTool = function () {
           Tools.RectangleCreateTool.apply(this, arguments);
-          this.defaults.StrokeColor = new Annotations.Color('#F69A00');
+          this.defaults.StrokeColor = new Annotations.Color('#ff0000');
           this.defaults.StrokeThickness = 2;
         };
         SnipTool.prototype = new Tools.RectangleCreateTool();
@@ -42,6 +43,10 @@ const WebViewerPDFTron = () => {
       };
 
       const customSnipTool = createSnipTool(docViewer);
+
+
+      instance.setToolbarGroup('toolbarGroup-Edit');
+
 
       // Register tool
       instance.registerTool({
@@ -85,6 +90,7 @@ const WebViewerPDFTron = () => {
         const pageIndex = annotation.PageNumber;
         // get the canvas for the page
         const iframeDocument = iframeWindow.document;
+        const canvasMultiplier = iframeWindow.utils.getCanvasMultiplier();
         const pageContainer = iframeDocument.getElementById(
           'pageContainer' + pageIndex,
         );
@@ -95,14 +101,13 @@ const WebViewerPDFTron = () => {
         const zoom = docViewer.getZoom();
         const x = annotation.X * zoom - leftOffset;
         const y = annotation.Y * zoom - topOffset;
-        const width = annotation.Width * zoom;
-        const height = annotation.Height * zoom;
+        const width = annotation.Width * zoom * canvasMultiplier;
+        const height = annotation.Height * zoom * canvasMultiplier;
 
         const copyCanvas = document.createElement('canvas');
         copyCanvas.width = width;
         copyCanvas.height = height;
         const ctx = copyCanvas.getContext('2d');
-        console.log(pageContainer);
         // copy the image data from the page to a new canvas so we can get the data URL
         ctx.drawImage(pageCanvas, x, y, width, height, 0, 0, width, height);
 

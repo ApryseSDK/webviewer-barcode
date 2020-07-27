@@ -24,10 +24,6 @@ const Barcode = ({ instance }) => {
           stampAnnot.Y = 250;
           stampAnnot.Width = 300;
           stampAnnot.Height = 200;
-        //   SVG IMPLEMENTATION
-        //   var svg = new XMLSerializer().serializeToString(svgRef.current);
-        //   var encodedData = btoa(svg);
-        //   stampAnnot.ImageData = `data:image/svg+xml;base64,${encodedData}`;
           stampAnnot.ImageData = svgRef.current.toDataURL();
           stampAnnot.Author = annotManager.getCurrentUser();
           annotManager.addAnnotation(stampAnnot);
@@ -36,7 +32,7 @@ const Barcode = ({ instance }) => {
       >
         Stamp on a PDF
       </button>
-      <canvas width={'300px'} height={'200px'} ref={svgRef}></canvas>
+      <canvas ref={svgRef}></canvas>
     </div>
   );
 };
