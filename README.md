@@ -1,4 +1,4 @@
-# PDFTron Document Search
+# WebViewer Barcode
 
 WebViewer Barcode demonstrates a PoC for generating barcodes, stamping them onto a PDF and then reading them after they have been flattened onto the document.
 
@@ -31,4 +31,3 @@ See [contributing](./CONTRIBUTING.md).
 ## License
 
 See [license](./LICENSE).
-![](https://onepixel.pdftron.com/webviewer-ui)
