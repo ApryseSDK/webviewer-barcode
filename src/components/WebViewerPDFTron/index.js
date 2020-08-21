@@ -2,6 +2,7 @@ import React, { useRef, useEffect, useState } from 'react';
 import WebViewer from '@pdftron/webviewer';
 import Barcode from '../Barcode';
 import javascriptBarcodeReader from 'javascript-barcode-reader';
+import jsQR from "jsqr";
 import './webviewer.css';
 
 const WebViewerPDFTron = () => {
@@ -44,9 +45,7 @@ const WebViewerPDFTron = () => {
 
       const customSnipTool = createSnipTool(docViewer);
 
-
       instance.setToolbarGroup('toolbarGroup-Edit');
-
 
       // Register tool
       instance.registerTool({
@@ -110,15 +109,21 @@ const WebViewerPDFTron = () => {
         const ctx = copyCanvas.getContext('2d');
         // copy the image data from the page to a new canvas so we can get the data URL
         ctx.drawImage(pageCanvas, x, y, width, height, 0, 0, width, height);
+        const imageData = ctx.getImageData(0,0, width, height);
+        const code = jsQR(imageData.data, imageData.width, imageData.height);
 
-        javascriptBarcodeReader({
-          image: copyCanvas,
-          barcode: 'code-128',
-        })
-          .then(result => {
-            alert(`Barcode: ${result}`);
+        if (code) {
+          alert(`QR Code: ${code.data}`);
+        } else {
+          javascriptBarcodeReader({
+            image: copyCanvas,
+            barcode: 'code-128',
           })
-          .catch(console.log);
+            .then(result => {
+              alert(`Barcode: ${result}`);
+            })
+            .catch(console.log);
+        }
 
         const annotManager = docViewer.getAnnotationManager();
         annotManager.deleteAnnotation(annotation);
