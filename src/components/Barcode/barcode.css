@@ -7,5 +7,14 @@
 
 canvas {
     width: 300px;
-    height: 210px;
+    height: 175px;
+}
+
+input, select, button, text {
+    margin: 8px 0px;
+    height: 30px;
+}
+
+.error {
+    color: red;
 }
