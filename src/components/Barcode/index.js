@@ -1,12 +1,37 @@
 import React, { useRef, useState } from 'react';
 import JsBarcode from 'jsbarcode';
+import QRCode from 'qrcode';
 import './barcode.css';
 
 const Barcode = ({ instance }) => {
-  const svgRef = useRef(null);
+  const barcodeRef = useRef(null);
+  const qrRef = useRef(null);
   const formatRef = useRef(null);
 
   const [errText, setErrText] = useState('');
+  const [qrInput, setQrInput] = useState('');
+
+  const stampBarcode = (e, type) => {
+    e.preventDefault();
+    const { Annotations, annotManager } = instance;
+    const stampAnnot = new Annotations.StampAnnotation();
+    stampAnnot.PageNumber = 1;
+    stampAnnot.X = 100;
+    stampAnnot.Y = 250;
+    stampAnnot.Width = 300;
+    
+    if (type === '2d') {
+      stampAnnot.ImageData = barcodeRef.current.toDataURL();
+      stampAnnot.Height = 200;
+    } else {
+      stampAnnot.ImageData = qrRef.current.toDataURL();
+      stampAnnot.Height = 300;
+    }
+
+    stampAnnot.Author = annotManager.getCurrentUser();
+    annotManager.addAnnotation(stampAnnot);
+    annotManager.redrawAnnotation(stampAnnot);
+  };
 
   return (
     <div className="barcodeContainer">
@@ -34,7 +59,7 @@ const Barcode = ({ instance }) => {
         onChange={e => {
           try {
             setErrText('');
-            JsBarcode(svgRef.current, e.currentTarget.value, {
+            JsBarcode(barcodeRef.current, e.currentTarget.value, {
               format: formatRef.current.value,
             });
           } catch (err) {
@@ -44,27 +69,41 @@ const Barcode = ({ instance }) => {
         type="text"
       ></input>
       <button
-        onClick={async e => {
-          e.preventDefault();
-          const { Annotations, annotManager } = instance;
-          const stampAnnot = new Annotations.StampAnnotation();
-          stampAnnot.PageNumber = 1;
-          stampAnnot.X = 100;
-          stampAnnot.Y = 250;
-          stampAnnot.Width = 300;
-          stampAnnot.Height = 200;
-          stampAnnot.ImageData = svgRef.current.toDataURL();
-          stampAnnot.Author = annotManager.getCurrentUser();
-          annotManager.addAnnotation(stampAnnot);
-          annotManager.redrawAnnotation(stampAnnot);
+        onClick={e => {
+          stampBarcode(e, '2d');
         }}
       >
         Stamp on a PDF
       </button>
-      <text className='error'>{errText}</text>
-      <canvas ref={svgRef}></canvas>
-      
+      <div className="error">{errText}</div>
+      <canvas className="barcodeCanvas" ref={barcodeRef}></canvas>
 
+      <h2>QR Code</h2>
+      <input
+        onChange={e => {
+          setQrInput(e.currentTarget.value);
+        }}
+        type="text"
+      ></input>
+      <button
+        onClick={e => {
+          QRCode.toCanvas(qrRef.current, qrInput, function (error) {
+            if (error) setErrText(error);
+            console.log('success!');
+          });
+        }}
+      >
+        Generate QR
+      </button>
+      <button
+        onClick={e => {
+          stampBarcode(e, 'qr');
+        }}
+      >
+        Stamp on a PDF
+      </button>
+      <div className="error">{errText}</div>
+      <canvas className="qrCanvas" ref={qrRef}></canvas>
     </div>
   );
 };
