@@ -9,13 +9,15 @@ const Barcode = ({ instance }) => {
   const formatRef = useRef(null);
 
   const [errText, setErrText] = useState('');
+  const [errQrText, setErrQrText] = useState('');
   const [qrInput, setQrInput] = useState('');
+
 
   const stampBarcode = (e, type) => {
     e.preventDefault();
-    const { Annotations, annotManager } = instance;
+    const { Annotations, annotManager, docViewer } = instance;
     const stampAnnot = new Annotations.StampAnnotation();
-    stampAnnot.PageNumber = 1;
+    stampAnnot.PageNumber = docViewer.getCurrentPage();
     stampAnnot.X = 100;
     stampAnnot.Y = 250;
     stampAnnot.Width = 300;
@@ -88,8 +90,7 @@ const Barcode = ({ instance }) => {
       <button
         onClick={e => {
           QRCode.toCanvas(qrRef.current, qrInput, function (error) {
-            if (error) setErrText(error);
-            console.log('success!');
+            if (error) setErrQrText(error);
           });
         }}
       >
@@ -102,7 +103,7 @@ const Barcode = ({ instance }) => {
       >
         Stamp on a PDF
       </button>
-      <div className="error">{errText}</div>
+      <div className="error">{errQrText}</div>
       <canvas className="qrCanvas" ref={qrRef}></canvas>
     </div>
   );
