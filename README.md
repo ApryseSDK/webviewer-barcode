@@ -18,9 +18,7 @@ npm start
 
 ## Barcode Libraries
 
-This app features [jsbarcode](https://github.com/lindell/JsBarcode) for generation and [javascript-barcode-reader](https://github.com/mubaidr/Javascript-Barcode-Reader) for reading of the 2D barcodes.
-
-This app features [jsqr](https://github.com/cozmo/jsQR) for generation and [qrcode](https://github.com/soldair/node-qrcode) for reading of the QR codes.
+This app features [jsbarcode](https://github.com/lindell/JsBarcode) for generation and [javascript-barcode-reader](https://github.com/mubaidr/Javascript-Barcode-Reader) for reading of the 2D barcodes and [jsqr](https://github.com/cozmo/jsQR) for generation and [qrcode](https://github.com/soldair/node-qrcode) for reading of the QR codes.
 
 ## API documentation
 
