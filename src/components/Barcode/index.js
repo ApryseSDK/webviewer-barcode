@@ -15,24 +15,24 @@ const Barcode = ({ instance }) => {
 
   const stampBarcode = (e, type) => {
     e.preventDefault();
-    const { Annotations, annotManager, docViewer } = instance;
+    const { Annotations, annotationManager, documentViewer } = instance.Core;
     const stampAnnot = new Annotations.StampAnnotation();
-    stampAnnot.PageNumber = docViewer.getCurrentPage();
+    stampAnnot.PageNumber = documentViewer.getCurrentPage();
     stampAnnot.X = 100;
     stampAnnot.Y = 250;
     stampAnnot.Width = 300;
     
     if (type === '2d') {
-      stampAnnot.ImageData = barcodeRef.current.toDataURL();
+      stampAnnot.setImageData(barcodeRef.current.toDataURL());
       stampAnnot.Height = 200;
     } else {
-      stampAnnot.ImageData = qrRef.current.toDataURL();
+      stampAnnot.setImageData(qrRef.current.toDataURL());
       stampAnnot.Height = 300;
     }
 
-    stampAnnot.Author = annotManager.getCurrentUser();
-    annotManager.addAnnotation(stampAnnot);
-    annotManager.redrawAnnotation(stampAnnot);
+    stampAnnot.Author = annotationManager.getCurrentUser();
+    annotationManager.addAnnotation(stampAnnot);
+    annotationManager.redrawAnnotation(stampAnnot);
   };
 
   return (
