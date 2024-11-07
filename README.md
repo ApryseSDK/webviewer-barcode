@@ -24,10 +24,6 @@ This app features [jsbarcode](https://github.com/lindell/JsBarcode) for generati
 
 See [API documentation](https://docs.apryse.com/api/web/global.html#WebViewer__anchor)
 
-## Contributing
-
-See [contributing](./CONTRIBUTING.md).
-
 ## License
 
 See [license](./LICENSE).
