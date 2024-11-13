@@ -83,12 +83,17 @@ const Barcode = ({ instance }) => {
       <h2>QR Code</h2>
       <input
         onChange={e => {
+          setErrQrText('');
           setQrInput(e.currentTarget.value);
         }}
         type="text"
       ></input>
       <button
         onClick={e => {
+          if (!qrInput) {
+            setErrQrText('Please enter a value');
+            return;
+          }
           QRCode.toCanvas(qrRef.current, qrInput, function (error) {
             if (error) setErrQrText(error);
           });

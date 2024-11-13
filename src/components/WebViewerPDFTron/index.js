@@ -11,7 +11,7 @@ const WebViewerPDFTron = () => {
 
   // if using a class, equivalent of componentDidMount
   useEffect(() => {
-    WebViewer.Iframe(
+    WebViewer(
       {
         path: '/webviewer/lib',
         initialDoc:
@@ -31,7 +31,6 @@ const WebViewerPDFTron = () => {
         PDFNet,
         getCanvasMultiplier,
       } = instance.Core;
-      const iframeWindow = instance.UI.iframeWindow;
       await PDFNet.initialize();
 
       const createSnipTool = docViewer => {
@@ -91,9 +90,9 @@ const WebViewerPDFTron = () => {
       customSnipTool.addEventListener('annotationAdded', annotation => {
         const pageIndex = annotation.PageNumber;
         // get the canvas for the page
-        const iframeDocument = iframeWindow.document;
+        const rootElement = document.getElementsByTagName('apryse-webviewer')[0].shadowRoot;
         const canvasMultiplier = getCanvasMultiplier();
-        const pageContainer = iframeDocument.getElementById(
+        const pageContainer = rootElement.getElementById(
           'pageContainer' + pageIndex,
         );
         const pageCanvas = pageContainer.querySelector('.canvas' + pageIndex);
