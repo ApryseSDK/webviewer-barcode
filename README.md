@@ -1,8 +1,8 @@
 # WebViewer Barcode
 
-WebViewer Barcode demonstrates a PoC for generating barcodes, stamping them onto a PDF and then reading them after they have been flattened onto the document. [Watch the demo here](https://youtu.be/KCUL3HoFxkM). 
+WebViewer Barcode demonstrates a PoC for generating barcodes, stamping them onto a PDF and then reading them after they have been flattened onto the document. [Watch the demo here](https://youtu.be/KCUL3HoFxkM) or [read the blog here](https://apryse.com/blog/annotation/stamp-and-read-barcode-on-pdfs-with-pdftron-sdk).
 
-![Screenshot](https://github.com/PDFTron/webviewer-barcode/blob/master/barcode.gif)
+![Screenshot](https://github.com/ApryseSDK/webviewer-barcode/blob/master/barcode.gif)
 
 ## Install
 
@@ -22,11 +22,7 @@ This app features [jsbarcode](https://github.com/lindell/JsBarcode) for generati
 
 ## API documentation
 
-See [API documentation](https://www.pdftron.com/documentation/web/guides/ui/apis).
-
-## Contributing
-
-See [contributing](./CONTRIBUTING.md).
+See [API documentation](https://docs.apryse.com/api/web/global.html#WebViewer__anchor)
 
 ## License
 
